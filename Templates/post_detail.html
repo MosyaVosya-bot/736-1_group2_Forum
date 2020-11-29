@@ -1,0 +1,78 @@
+{% extends "base.html" %}
+{% block content %}
+<article class="media content-section">
+    <div class="media-body">
+      <div class="article-metadata">
+        </div>
+        <a class="mr-2" href="#">{{ post.author }}</a>
+        <small class="text-muted">{{ post.date_posted|date:"F d, Y" }}
+            {% if user.is_authenticated %}
+            {% if post.author == user %}
+            <a href="{% url 'post_delete' id=post.id %}" id="delete">
+                <button type="button" class="btn btn-danger">Удалить пост</button>
+              </a>
+              {% endif %}
+              {% endif %}
+        </small>
+        <h2 class="article-title">{{ post.title }}</h2>
+        <p class="article-content">{{ post.content }}</p>
+      </div>
+    </div>
+    </article>
+
+    <div class="container-fluid mt-2">
+        <div class="form-group row">
+          <form method="post" class="comment-form" action=".">
+            {% csrf_token %}
+            {% if user.is_authenticated %}
+            {{ comment_form.as_p }}
+              <input type="submit" value="Оставить комментарий" class="btn btn-outline-success">
+            {% else %}
+
+            {% endif %}
+          </form>
+        </div>
+      </div>
+      
+      Комментариев в посте: {{ comments.count }}
+      {% for comment in comments %}
+        <blockquote class="blockquote">
+          <p class="mb-0"><small>{{ comment.content }}</small></p>
+          <footer class="blockquote-footer"><small>Комментарий от <cite title="Source Title">{{ comment.user|capfirst }}</cite></small>
+            <button type="button" name="button" class="reply-btn btn btn-outline-dark btn-sm ml-2">Показать Ответы</button>
+        </footer>
+        </blockquote>
+      
+        <div class="replied-comments container mt-2"style="display:none;">
+          {% for reply in comment.replies.all %}
+          <blockquote class="blockquote">
+            <p class="mb-0"><small>{{ reply.content }}</small></p>
+            <footer class="blockquote-footer"><small>Комментарий от <cite title="Source Title">{{ reply.user|capfirst }}</cite></small>
+          </footer>
+          </blockquote>
+          {% endfor %}
+          <div class="form-group row">
+            <form method="post" class="reply-form" action=".">
+              {% csrf_token %}
+              <input type="hidden" name="comment_id" value="{{ comment.id }}">
+              {% if user.is_authenticated %}
+              {{ comment_form.as_p }}
+                <input type="submit" value="Цитировать" class="btn btn-outline-success">
+              {% else %}
+              {% endif %}
+            </form>
+          </div>
+        </div>
+      {% endfor %}   
+      <meta charset="utf-8">
+      <title>slideToggle demo</title>
+      <script src="https://code.jquery.com/jquery-3.5.0.js"></script>
+    </head>
+    <body>
+     
+    <script>
+    $( ".reply-btn" ).click(function() {
+        $(this).parent().parent().next('.replied-comments').fadeToggle()
+    });
+    </script>
+{% endblock content %}

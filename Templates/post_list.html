@@ -1,0 +1,10 @@
+{% extends "base.html" %}
+{% block content %}
+{% for p in posts %}
+<div class="d-flex flex-column flex-md-row align-items-center p-3 px-md-4 mb-0 bg-blue border-bottom shadow-sm">
+<a class="article-title" href="{% url 'post_detail' p.id %}">{{ p.title }}</a>
+<div class="p-2 bd-highlight">Пост создан: {{ p.author }}</div>
+<div class="p-2 bd-highlight">{{ p.date_posted|date:"F d, Y" }}</div>
+</div>
+{% endfor %}
+{% endblock content %}
